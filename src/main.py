@@ -1,16 +1,17 @@
+import argparse
 import asyncio
 from datetime import datetime
 from datetime import timedelta
 
 import aiohttp
-from dateutil import parser
+from dateutil import parser as dateparser
 import matplotlib
 import matplotlib.pyplot as plt
 
 import config
 
 
-async def main():
+async def plot():
     config.read("config.toml")
 
     matplotlib.use("TkAgg")
@@ -35,7 +36,7 @@ async def main():
                     skip_first = False
                     continue
                 dt, value = line.decode().strip().split(',')
-                dts.append(parser.parse(dt))
+                dts.append(dateparser.parse(dt))
                 values.append(float(value))
 
     plt.subplot(2, 1, 1)
@@ -60,7 +61,7 @@ async def main():
                     continue
                 dt, _, sinst = line.decode().strip().split(',')
                 sinst = int(sinst)
-                dts.append(parser.parse(dt))
+                dts.append(dateparser.parse(dt))
                 values.append(sinst)
 
     plt.subplot(2, 1, 2)
@@ -87,7 +88,7 @@ async def main():
                         skip_first = False
                         continue
                     dt, humidity, temperature = line.decode().strip().split(',')
-                    dts.append(parser.parse(dt))
+                    dts.append(dateparser.parse(dt))
                     hmds.append(float(humidity))
                     tmps.append(float(temperature))
 
@@ -105,5 +106,28 @@ async def main():
     plt.show()
 
 
+async def close():
+    pass
+
+
+async def run(config_filename: str):
+    config.read("config.toml")
+
+    await plot()
+
+
 if __name__ == "__main__":
-    asyncio.run(main())
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-c", "--config", default="config.toml")
+    args = parser.parse_args()
+
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+        loop.run_until_complete(run(args.config))
+    except KeyboardInterrupt:
+        pass
+    finally:
+        loop.run_until_complete(close())
+        loop.stop()
+
