@@ -5,11 +5,14 @@ from datetime import timedelta
 import aiohttp
 from dateutil import parser
 import matplotlib
-import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
+
+import config
 
 
 async def main():
+    config.read("config.toml")
+
     matplotlib.use("TkAgg")
     plt.style.use("ggplot")
 
@@ -21,7 +24,10 @@ async def main():
         values = []
 
         start_datetime = int((datetime.now() - timedelta(days=2)).timestamp())
-        url = f"http://lully:8085/pressure?start={start_datetime}"
+        url = (
+            f"http://{config.server.hostname}:{config.server.port}/"
+            f"pressure?start={start_datetime}"
+        )
         skip_first = True
         async with session.get(url) as r:
             async for line in r.content:
@@ -42,7 +48,10 @@ async def main():
         values = []
 
         start_datetime = int((datetime.now() - timedelta(days=2)).timestamp())
-        url = f"http://lully:8085/linky?start={start_datetime}"
+        url = (
+            f"http://{config.server.hostname}:{config.server.port}/"
+            f"linky?start={start_datetime}"
+        )
         skip_first = True
         async with session.get(url) as r:
             async for line in r.content:
@@ -60,14 +69,17 @@ async def main():
     plt.plot(dts, values)
 
     # sonoff snzb-02p
-    for n, device in enumerate(["sejour", "chambre_haut"]):
+    for n, device in enumerate(config.device.snzb02p):
         async with aiohttp.ClientSession(raise_for_status=True) as session:
             dts = []
             hmds = []
             tmps = []
 
             start_datetime = int((datetime.now() - timedelta(days=2)).timestamp())
-            url = f"http://lully:8085/snzb02p?device={device}&start={start_datetime}"
+            url = (
+                f"http://{config.server.hostname}:{config.server.port}/"
+                f"snzb02p?device={device}&start={start_datetime}"
+            )
             skip_first = True
             async with session.get(url) as r:
                 async for line in r.content:
