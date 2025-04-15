@@ -1,0 +1,6 @@
+[server]
+hostname = "lully"
+port = 8085
+
+[device]
+snzb02p = ["sejour", "chambre_haut"]
