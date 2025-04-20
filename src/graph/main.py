@@ -8,7 +8,9 @@ from dateutil import parser as dateparser
 import matplotlib
 import matplotlib.pyplot as plt
 
-import config
+import graph.config as config
+
+__version__ = "1.0.0"
 
 
 async def plot():
@@ -116,7 +118,7 @@ async def run(config_filename: str):
     await plot()
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--config", default="config.toml")
     args = parser.parse_args()
@@ -130,4 +132,3 @@ if __name__ == "__main__":
     finally:
         loop.run_until_complete(close())
         loop.stop()
-

@@ -1,0 +1,36 @@
+[project]
+name = "graph"
+dynamic = ["version"]
+description = "This package draws graphs and enables to query the database."
+authors = [{ name = "Franck Barbenoire", email = "fbarbenoire@gmail.com" }]
+readme = "README.rst"
+requires-python = ">=3.11"
+dependencies = [
+    "aiohttp==3.11.16",
+    "python-dateutil==2.9.0.post0",
+    "matplotlib==3.10.1"
+]
+license = "GPL-3.0-or-later"
+keywords = ["home automation", "graph"]
+
+[project.urls]
+Homepage = "https://github.com/domotik-or/graph"
+
+[build-system]
+requires = ["setuptools>=75.0"]
+build-backend = "setuptools.build_meta"
+
+[project.scripts]
+graph = "graph.main:main"
+
+[tool.mypy]
+python_version = 3.11
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.dynamic]
+version = {attr = "graph.main.__version__"}
