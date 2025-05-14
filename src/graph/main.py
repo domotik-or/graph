@@ -10,8 +10,6 @@ import matplotlib.pyplot as plt
 
 import graph.config as config
 
-__version__ = "1.0.0"
-
 
 async def plot():
     config.read("config.toml")
